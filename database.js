@@ -52,6 +52,7 @@ db.Client = db.define('Client', {
     redirectUri: Sequelize.STRING
 });
 
+// drop the entire db when on a local machine and run the test files in the test/ dir
 if (!process.env.NODE_ENV) {
     db.drop();
 }
