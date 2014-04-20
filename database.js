@@ -1,56 +1,13 @@
 var Sequelize = require('sequelize');
+var DataTypes = Sequelize;
 var db = new Sequelize(process.env.DB_URL, {
     logging: false
 });
 
-db.User = db.define('User', {
-    username: {
-        type: Sequelize.STRING,
-        unique: true,
-        notNull: true
-    },
-    password: Sequelize.STRING,
-    firstName: Sequelize.STRING,
-    lastName: Sequelize.STRING,
-    email: {
-        type: Sequelize.STRING,
-        unique: true,
-        notNull: true,
-        isEmail: true
-    }
-});
-
-db.AccessToken = db.define('AccessToken', {
-    accessToken: Sequelize.STRING,
-    clientId: Sequelize.STRING,
-    userId: {
-        type: Sequelize.INTEGER,
-        unique: true
-    },
-    expires: Sequelize.DATE
-});
-
-db.RefreshToken = db.define('RefreshToken', {
-    refreshToken: Sequelize.STRING,
-    clientId: Sequelize.STRING,
-    userId: Sequelize.INTEGER,
-    expires: Sequelize.DATE
-});
-
-db.Client = db.define('Client', {
-    clientId: {
-        type: Sequelize.STRING,
-        unique: true
-    },
-    clientSecret: Sequelize.STRING,
-    clientType: {
-        type: Sequelize.ENUM,
-        values: ['public', 'confidential', 'web_application', 'native_application'],
-        defaultValue: 'public'
-    },
-    userId: Sequelize.INTEGER,
-    redirectUri: Sequelize.STRING
-});
+db.User = db.import(__dirname + '/models/user');
+db.AccessToken = db.import(__dirname + '/models/access_token');
+db.RefreshToken = db.import(__dirname + '/models/refresh_token');
+db.Client = db.import(__dirname + '/models/client');
 
 // drop the entire db when on a local machine and run the test files in the test/ dir
 if (!process.env.NODE_ENV) {
@@ -58,11 +15,11 @@ if (!process.env.NODE_ENV) {
 }
 
 db.sync()
-    .success(function() {
-        console.log('connected :)');
-    })
-    .error(function(err) {
-        console.log('connection failed...', err);
-    });
+.success(function() {
+    console.log('connected :)');
+})
+.error(function(err) {
+    console.log('connection failed...', err);
+});
 
 module.exports = db;
